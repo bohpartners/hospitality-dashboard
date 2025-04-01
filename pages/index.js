@@ -1,72 +1,43 @@
-import { useState, useEffect } from "react";
-import DashboardHeader from "../components/DashboardHeader";
-import SalesOverview from "../components/SalesOverview";
-import MapView from "../components/MapView";
-import EBITDAChart from "../components/EBITDAChart";
-import StaffTable from "../components/StaffTable";
-import PnLSummary from "../components/PnLSummary";
-import { performanceData } from "../mockData";
+import React from "react";
 
-export default function DashboardPage() {
-  const [selectedUnit, setSelectedUnit] = useState("All");
-  const [timeframe, setTimeframe] = useState("Week");
-  const [dateRange, setDateRange] = useState({ start: "2024-01-01", end: "2024-12-31" });
-  const [barTimeframeData, setBarTimeframeData] = useState([]);
+const fallbackData = [
+  { name: "Curl Curl", sales: 10000, teamSize: 5 },
+  { name: "Bondi", sales: 15000, teamSize: 8 },
+  { name: "Wategos", sales: 12000, teamSize: 6 },
+  { name: "Tamarama", sales: 9000, teamSize: 4 },
+];
 
-  const generateTimeframeData = (timeframe) => {
-    const labels = {
-      Day: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-      Week: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-      Month: ["Week 1", "Week 2", "Week 3", "Week 4"],
-      Quarter: ["Jan-Mar", "Apr-Jun", "Jul-Sep", "Oct-Dec"],
-      Year: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-    };
-    const fallback = ["N/A"];
-    const selectedLabels = labels[timeframe] || fallback;
-    return selectedLabels.map((label) => ({ label, value: Math.floor(Math.random() * 10000) || 1000 }));
-  };
-
-  useEffect(() => {
-    const data = generateTimeframeData(timeframe);
-    setBarTimeframeData(Array.isArray(data) ? data : [{ label: "N/A", value: 1000 }]);
-  }, [timeframe]);
-
-  const filteredData =
-    selectedUnit === "All"
-      ? performanceData
-      : performanceData.filter((unit) => unit.name === selectedUnit);
-
-  const activeUnit = filteredData.length > 0 ? (selectedUnit === "All" ? performanceData[0] : filteredData[0]) : null;
-
-  if (!activeUnit) {
-    return (
-      <div className="p-6 bg-white text-black min-h-screen space-y-6">
-        <h1>No data available</h1>
-      </div>
-    );
-  }
-
-  const pieData = activeUnit.salesSources
-    ? Object.entries(activeUnit.salesSources).map(([name, value]) => ({ name, value }))
-    : [];
+export default function HomePage() {
+  const performanceData = fallbackData;
 
   return (
-    <div className="p-6 bg-white text-black min-h-screen space-y-6">
-      <DashboardHeader
-        selectedUnit={selectedUnit}
-        setSelectedUnit={setSelectedUnit}
-        timeframe={timeframe}
-        setTimeframe={setTimeframe}
-        dateRange={dateRange}
-        setDateRange={setDateRange}
-      />
-      <SalesOverview barTimeframeData={barTimeframeData} pieData={pieData} />
-      <MapView units={performanceData} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <EBITDAChart data={activeUnit} />
-        <StaffTable staff={activeUnit.staffLog || []} />
+    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
+      <h1>Hospitality Dashboard</h1>
+      <p>Live overview of your cafés & commissary units.</p>
+
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+        gap: "1rem",
+        marginTop: "2rem"
+      }}>
+        {performanceData.map((unit) => (
+          <div
+            key={unit.name}
+            style={{
+              backgroundColor: "#f4f4f4",
+              borderRadius: "12px",
+              padding: "1rem",
+              boxShadow: "0 1px 4px rgba(0, 0, 0, 0.1)"
+            }}
+          >
+            <h2>{unit.name}</h2>
+            <p><strong>Sales:</strong> ${unit.sales.toLocaleString()}</p>
+            <p><strong>Team Size:</strong> {unit.teamSize}</p>
+            <p><strong>Sales per Staff:</strong> ${(unit.sales / unit.teamSize).toFixed(2)}</p>
+          </div>
+        ))}
       </div>
-      <PnLSummary pnl={activeUnit.pnl || { revenue: 0, expenses: 0, profit: 0 }} />
     </div>
   );
 }
