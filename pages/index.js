@@ -36,7 +36,7 @@ export default function DashboardPage() {
       ? performanceData
       : performanceData.filter((unit) => unit.name === selectedUnit);
 
-  const activeUnit = selectedUnit === "All" ? performanceData[0] : filteredData[0];
+  const activeUnit = filteredData.length > 0 ? (selectedUnit === "All" ? performanceData[0] : filteredData[0]) : null;
 
   if (!activeUnit) {
     return (
