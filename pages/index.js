@@ -1,27 +1,3 @@
-import React from "react";
-
-const fallbackData = [
-  { name: "Curl Curl", sales: 10000, teamSize: 5 },
-  { name: "Bondi", sales: 15000, teamSize: 8 },
-  { name: "Wategos", sales: 12000, teamSize: 6 },
-  { name: "Tamarama", sales: 9000, teamSize: 4 },
-];
-
-export default function HomePage() {
-  const performanceData = fallbackData;
-
-  return (
-    <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
-      <h1>Hospitality Dashboard</h1>
-      <p>Live overview of your cafés & commissary units.</p>
-
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-        gap: "1rem",
-        marginTop: "2rem"
-      }}>
-        {performanceData.map((unit) => (
           <div
             key={unit.name}
             style={{
